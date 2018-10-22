@@ -15,6 +15,8 @@
 #define SI4730_SEEK_AM 0x41
 #define SI4730_SEEK_UP 0x0C
 #define SI4730_SEEK_DOWN 0x04
+#define SI4730_FM_STATUS 0x22
+#define SI4730_AM_STATUS 0x42
 #define SI4730_MODE_FM 0x50
 #define SI4730_MODE_AM 0x51 // 0x01 이라는 데이터시트 내용도 있음. 참고
 
@@ -34,10 +36,16 @@ class Si4730
     	void setAMFrequency(int freq);
     	void seekFM(bool updown);
     	void seekAM(bool updown);
+        void setVolume(short vol);
+        void setMute(bool mute);
+        void channelFilterFM(char filter);
     	void channelFilterAM(char filter);
+        void deEmphasisAM(bool emphasis);
+        void spaceSeekAM(bool space);
     	void receiveResponse(void);
     	void GET_REV(void);
     	void FM_STATUS(void);
+        void AM_STATUS(void);
     	void powerDown(void);
 
         int frequency = 9870, i=6;

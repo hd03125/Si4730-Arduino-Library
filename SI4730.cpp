@@ -93,6 +93,74 @@ void Si4730::seekAM(bool updown) // TRUE 값 받으면 주파수 위로 검색, 
 }
 
 
+
+void Si4730::setVolume(short vol)
+{
+	if(vol<64 && vol>=0) // volume range 0 ~ 63
+	{
+		Wire.beginTransmission(SI4730_ADDR);
+		Wire.write(SI4730_SET_PROPERTY);
+		Wire.write(0x40);  // CMD1
+		Wire.write(0x00);  // CMD2
+		Wire.write(0x00);  // ARG1
+		Wire.write(vol);   // ARG2 - volume
+		Wire.endTransmission(true);
+	}
+	else
+		return;
+	delay(50);
+}
+
+
+void Si4730::setMute(bool mute)  // true = mute / false = unmute
+{
+	Wire.beginTransmission(SI4730_ADDR);
+	Wire.write(SI4730_SET_PROPERTY);
+	Wire.write(0x40);
+	Wire.write(0x01);
+	Wire.write(0x00);
+	if(mute==true)
+		Wire.write(0x03);
+	else
+		Wire.write(0x00);
+	Wire.endTransmission(true);
+	delay(50);
+}
+
+
+void Si4730::channelFilterFM(char filter)
+{
+	Wire.beginTransmission(SI4730_ADDR);
+	Wire.write(SI4730_SET_PROPERTY);
+	Wire.write(0x11);
+	Wire.write(0x02);
+	switch(filter)
+	{
+		case 5: // auto
+			Wire.write(0x00);
+			break;
+
+		case 4: // 110KHz Wide
+			Wire.write(0x01);
+			break;
+
+		case 3: // 84Khz Narrow
+			Wire.write(0x02);
+			break;
+
+		case 2: // 60KHz Narrower
+			Wire.write(0x03);
+			break;
+
+		case 1: // 40KHz Narrowest
+			Wire.write(0x04);
+			break;
+	}
+	Wire.endTransmission(true);
+	delay(50);
+}
+
+
 void Si4730::channelFilterAM(char filter)
 {
 	Wire.beginTransmission(SI4730_ADDR);
@@ -122,12 +190,42 @@ void Si4730::channelFilterAM(char filter)
 		case 1:
 		Wire.write(SI4730_AM_FILTER_1);
 		break;
-
-		default:
-		break;
 	}
+	Wire.endTransmission(true);
 	delay(50);
 }
+
+
+void Si4730::deEmphasisAM(bool emphasis)  // 신호 대 잡음 비율 개선
+{
+	Wire.beginTransmission(SI4730_SET_PROPERTY);
+	Wire.write(0x31);  // CMD1
+	Wire.write(0x00);  // CMD2
+	Wire.write(0x00);  // ARG1
+	if(emphasis==true)
+		Wire.write(0x01);
+	else
+		Wire.write(0x00);
+	Wire.endTransmission(true);
+	delay(50);
+}
+
+
+void Si4730::spaceSeekAM(bool space)  // true-9   false-10
+{
+	Wire.beginTransmission(SI4730_ADDR);
+	Wire.write(SI4730_SET_PROPERTY);
+	Wire.write(0x34);
+	Wire.write(0x02);
+	Wire.write(0x00);
+	if(space==true)
+		Wire.write(0x0A);
+	else
+		Wire.write(0x09);
+	Wire.endTransmission(true);
+	delay(50);
+}
+
 
 
 void Si4730::receiveResponse()
@@ -168,13 +266,32 @@ void Si4730::FM_STATUS()
 {
 	int cache;
 	Wire.beginTransmission(SI4730_ADDR);
-	Wire.write(0x22);
+	Wire.write(SI4730_FM_STATUS);
 	Wire.write(0x00);
 	Wire.endTransmission(true);
 
 	delay(50);
 	Serial.println("FM STATUS");
 
+	Wire.requestFrom(SI4730_ADDR, 8);
+	for(int i=0; i<8; i++)
+	{
+		cache = Wire.read();
+		Serial.println(cache);
+	}
+	delay(50);
+}
+
+void Si4730::AM_STATUS()
+{
+	int cache;
+	Wire.beginTransmission(SI4730_ADDR);
+	Wire.write(SI4730_AM_STATUS);
+	Wire.write(0x00);
+	Wire.endTransmission(true);
+
+	delay(50);
+	Serial.println("AM STATUS");	
 	Wire.requestFrom(SI4730_ADDR, 8);
 	for(int i=0; i<8; i++)
 	{
