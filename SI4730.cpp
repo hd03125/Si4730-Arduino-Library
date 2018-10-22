@@ -32,14 +32,14 @@ void Si4730::powerUp(bool mode) // Si4730 초기화, mode가 true 면 FM, false�
 
 void Si4730::setFMFrequency(int freq)
 {
-	highbyte = freq >> 8;
-	lowbyte = freq & 0x00FF;  // 주파수(16비트)를 8비트 2개로 분할 
+	_highbyte = freq >> 8;
+	_lowbyte = freq & 0x00FF;  // 주파수(16비트)를 8비트 2개로 분할 
 
 	Wire.beginTransmission(SI4730_ADDR);
 	Wire.write(SI4730_SET_FM_FREQ);
 	Wire.write(0x00); // ARG1에서 BIT 기능 사용 X
-	Wire.write(highbyte);
-	Wire.write(lowbyte);
+	Wire.write(_highbyte);
+	Wire.write(_lowbyte);
 	// Wire.write(ANTCAP); 안테나 캐패시터 수동 설정, 사용하지 않음. ARG4.
 	Wire.endTransmission(true);
 	delay(50);
@@ -50,14 +50,14 @@ void Si4730::setFMFrequency(int freq)
 
 void Si4730::setAMFrequency(int freq)
 {
-	highbyte = freq >> 8;
-	lowbyte = freq & 0x00FF;  // 주파수(16비트)를 8비트 2개로 분할 
+	_highbyte = freq >> 8;
+	_lowbyte = freq & 0x00FF;  // 주파수(16비트)를 8비트 2개로 분할 
 
 	Wire.beginTransmission(SI4730_ADDR);
 	Wire.write(SI4730_SET_AM_FREQ);
 	Wire.write(0x00);  // FAST Tuning 비활성, 활성화 0x11
-	Wire.write(highbyte);
-	Wire.write(lowbyte);
+	Wire.write(_highbyte);
+	Wire.write(_lowbyte);
 	Wire.endTransmission();
 	delay(50);
 }

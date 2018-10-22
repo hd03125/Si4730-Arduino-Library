@@ -48,11 +48,12 @@ class Si4730
         void AM_STATUS(void);
     	void powerDown(void);
 
-        int frequency = 9870, i=6;
-        char highbyte, lowbyte, filter=6;
+        
 
   	private:
         int _pin;
+        int _frequency = 9870, _i=6;
+        char _highbyte, _lowbyte, _filter=6;
 };
  
 #endif
