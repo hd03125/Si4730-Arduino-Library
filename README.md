@@ -7,7 +7,9 @@ Library for Si4730 D60.
 Command to use : 
 
 powerUp(bool); - turn on Si4730.  true = FM  /  false = AM
+
 setFMFrequency(uint16_t); - Set Frequency to received integer. ex) 98.7MHz -> 9870, 102.35MHz -> 10235
+
 setAMFrequency(uint16_t); - Set Frequency to received integer. ex) 1566KHz -> 1566.
 seekFM(bool); - Seek FM Frequency.  True to seek UP Frequency, False to DOWN.
 seekAM(bool); - Seek AM Frequency.  True to seek UP Frequency, False to DOWN.
