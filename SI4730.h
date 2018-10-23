@@ -30,16 +30,16 @@
 class Si4730
 {
   	public:
-    	Si4730(int rstpin);
+    	Si4730(uint8_t rstpin);
     	void powerUp(bool mode);
-    	void setFMFrequency(int freq);
-    	void setAMFrequency(int freq);
+    	void setFMFrequency(uint16_t freq);
+    	void setAMFrequency(uint16_t freq);
     	void seekFM(bool updown);
     	void seekAM(bool updown);
-        void setVolume(short vol);
+        void setVolume(uint8_t vol);
         void setMute(bool mute);
-        void channelFilterFM(char filter);
-    	void channelFilterAM(char filter);
+        void channelFilterFM(uint8_t filter);
+    	void channelFilterAM(uint8_t filter);
         void deEmphasisAM(bool emphasis);
         void spaceSeekAM(bool space);
     	void receiveResponse(void);
@@ -51,9 +51,8 @@ class Si4730
         
 
   	private:
-        int _pin;
-        int _frequency = 9870, _i=6;
-        char _highbyte, _lowbyte, _filter=6;
+        uint8_t _pin, _i=6, _highbyte, _lowbyte, _filter=6;
+        uint16_t _frequency = 9870;
 };
  
 #endif

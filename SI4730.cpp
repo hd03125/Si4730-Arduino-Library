@@ -3,7 +3,7 @@
 #include <Si4730.h>
 
 
-Si4730::Si4730(int rstpin)
+Si4730::Si4730(uint8_t rstpin)
 {
 	_pin = rstpin;
 }
@@ -30,7 +30,7 @@ void Si4730::powerUp(bool mode) // Si4730 초기화, mode가 true 면 FM, false�
 }
 
 
-void Si4730::setFMFrequency(int freq)
+void Si4730::setFMFrequency(uint16_t freq)
 {
 	_highbyte = freq >> 8;
 	_lowbyte = freq & 0x00FF;  // 주파수(16비트)를 8비트 2개로 분할 
@@ -48,7 +48,7 @@ void Si4730::setFMFrequency(int freq)
 }
 
 
-void Si4730::setAMFrequency(int freq)
+void Si4730::setAMFrequency(uint16_t freq)
 {
 	_highbyte = freq >> 8;
 	_lowbyte = freq & 0x00FF;  // 주파수(16비트)를 8비트 2개로 분할 
@@ -94,7 +94,7 @@ void Si4730::seekAM(bool updown) // TRUE 값 받으면 주파수 위로 검색, 
 
 
 
-void Si4730::setVolume(short vol)
+void Si4730::setVolume(uint8_t vol)
 {
 	if(vol<64 && vol>=0) // volume range 0 ~ 63
 	{
@@ -128,7 +128,7 @@ void Si4730::setMute(bool mute)  // true = mute / false = unmute
 }
 
 
-void Si4730::channelFilterFM(char filter)
+void Si4730::channelFilterFM(uint8_t filter)
 {
 	Wire.beginTransmission(SI4730_ADDR);
 	Wire.write(SI4730_SET_PROPERTY);
@@ -161,7 +161,7 @@ void Si4730::channelFilterFM(char filter)
 }
 
 
-void Si4730::channelFilterAM(char filter)
+void Si4730::channelFilterAM(uint8_t filter)
 {
 	Wire.beginTransmission(SI4730_ADDR);
 	Wire.write(SI4730_SET_PROPERTY);
@@ -230,7 +230,7 @@ void Si4730::spaceSeekAM(bool space)  // true-9   false-10
 
 void Si4730::receiveResponse()
 {
-	int cache;
+	uint8_t cache;
 
 	Wire.requestFrom(SI4730_ADDR, 1);   
 	cache = Wire.read();
@@ -244,7 +244,7 @@ void Si4730::receiveResponse()
 
 void Si4730::GET_REV()
 {
-	int rev[15];
+	uint8_t rev[15];
 	Wire.beginTransmission(SI4730_ADDR);
 	Wire.write(0x10);
 	Wire.endTransmission(true);
@@ -264,14 +264,15 @@ void Si4730::GET_REV()
 
 void Si4730::FM_STATUS()
 {
-	int cache;
+	uint8_t cache;
+	uint16_t rfreq;
 	Wire.beginTransmission(SI4730_ADDR);
 	Wire.write(SI4730_FM_STATUS);
 	Wire.write(0x00);
 	Wire.endTransmission(true);
 
 	delay(50);
-	Serial.println("FM STATUS");
+	Serial.println("--- FM STATUS ---");
 
 	Wire.requestFrom(SI4730_ADDR, 8);
 	for(int i=0; i<8; i++)
@@ -279,25 +280,52 @@ void Si4730::FM_STATUS()
 		cache = Wire.read();
 		Serial.println(cache);
 	}
+	Serial.println("");
+
+	rfreq = cache[2];  // 주파수 정보 읽기 & 16비트로 합병 
+	rfreq << 8;
+	rfreq = cache[3];
+
+	Serial.print("FM Frequency : ");
+	Serial.println(rfreq);
+	Serial.print("FM RSSI : ");
+	Serial.println(cache[4]);
+	Serial.print("FM SNR : ");
+	Serial.println(cache[5]);
+
 	delay(50);
 }
 
 void Si4730::AM_STATUS()
 {
-	int cache;
+	uint8_t cache[8];
+	uint16_t rfreq;
 	Wire.beginTransmission(SI4730_ADDR);
 	Wire.write(SI4730_AM_STATUS);
 	Wire.write(0x00);
 	Wire.endTransmission(true);
 
 	delay(50);
-	Serial.println("AM STATUS");	
+	Serial.println("--- AM STATUS ---");	
 	Wire.requestFrom(SI4730_ADDR, 8);
-	for(int i=0; i<8; i++)
+	for(int _i=0; _i<8; _i++)
 	{
-		cache = Wire.read();
-		Serial.println(cache);
+		cache[_i] = Wire.read();
+		Serial.println(cache[_i]);
 	}
+	Serial.println("");
+
+	rfreq = cache[2];  // 주파수 정보 읽기 & 16비트로 합병 
+	rfreq << 8;
+	rfreq = cache[3];
+
+	Serial.print("AM Frequency : ");
+	Serial.println(rfreq);
+	Serial.print("AM RSSI : ");
+	Serial.println(cache[4]);
+	Serial.print("AM SNR : ");
+	Serial.println(cache[5]);
+
 	delay(50);
 }
 
