@@ -20,7 +20,7 @@
 #define SI4730_MODE_FM 0x50
 #define SI4730_MODE_AM 0x51 // 0x01 이라는 데이터시트 내용도 있음. 참고
 
-// AM 채널 필터 값 
+// AM 채널 필터 값
 #define SI4730_AM_FILTER_6 0x00
 #define SI4730_AM_FILTER_4 0x01
 #define SI4730_AM_FILTER_3 0x02

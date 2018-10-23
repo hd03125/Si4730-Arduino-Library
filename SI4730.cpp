@@ -211,7 +211,7 @@ void Si4730::deEmphasisAM(bool emphasis)  // 신호 대 잡음 비율 개선
 }
 
 
-void Si4730::spaceSeekAM(bool space)  // true-9   false-10
+void Si4730::spaceSeekAM(bool space)  // true -9KHz / false - 10KHz
 {
 	Wire.beginTransmission(SI4730_ADDR);
 	Wire.write(SI4730_SET_PROPERTY);
@@ -250,9 +250,8 @@ void Si4730::GET_REV()
 	Wire.endTransmission(true);
 
 	delay(100);
-
+	Serial.println("GET Revision from Si4730 - ");
 	Wire.requestFrom(SI4730_ADDR, 16);
-
 	for(int i=0; i<16; i++)
 	{
 		rev[i] = Wire.read();
@@ -283,15 +282,18 @@ void Si4730::FM_STATUS()
 	Serial.println("");
 
 	rfreq = cache[2];  // 주파수 정보 읽기 & 16비트로 합병 
-	rfreq << 8;
-	rfreq = cache[3];
+	rfreq <<= 8;
+	rfreq |= cache[3];
 
 	Serial.print("FM Frequency : ");
-	Serial.println(rfreq);
+	Serial.print(rfreq*0.01);
+	Serial.println("MHz");
 	Serial.print("FM RSSI : ");
-	Serial.println(cache[4]);
+	Serial.print(cache[4]);
+	Serial.println("dBi");
 	Serial.print("FM SNR : ");
-	Serial.println(cache[5]);
+	Serial.print(cache[5]);
+	Serial.println("dBi");
 
 	delay(50);
 }
@@ -316,15 +318,18 @@ void Si4730::AM_STATUS()
 	Serial.println("");
 
 	rfreq = cache[2];  // 주파수 정보 읽기 & 16비트로 합병 
-	rfreq << 8;
-	rfreq = cache[3];
+	rfreq <<= 8;
+	rfreq |= cache[3];
 
 	Serial.print("AM Frequency : ");
-	Serial.println(rfreq);
+	Serial.print(rfreq);
+	Serial.println("KHz");
 	Serial.print("AM RSSI : ");
-	Serial.println(cache[4]);
+	Serial.print(cache[4]);
+	Serial.println("dBi");
 	Serial.print("AM SNR : ");
-	Serial.println(cache[5]);
+	Serial.print(cache[5]);
+	Serial.println("dBi");
 
 	delay(50);
 }
