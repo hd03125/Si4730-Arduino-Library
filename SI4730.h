@@ -44,11 +44,10 @@ class Si4730
         void spaceSeekAM(bool space);
     	void receiveResponse(void);
     	void GET_REV(void);
+        uint16_t getProperty(uint16_t command);
     	void FM_STATUS(void);
         void AM_STATUS(void);
     	void powerDown(void);
-
-        
 
   	private:
         uint8_t _pin, _i=6, _highbyte, _lowbyte, _filter=6;

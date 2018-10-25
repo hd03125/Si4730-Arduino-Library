@@ -22,7 +22,7 @@ void Si4730::powerUp(bool mode) // Si4730 초기화, mode가 true 면 FM, false�
 	Wire.write(SI4730_POWER_UP);
 	Wire.write(0x90); // FM 수신 모드          ARG 1
 	Wire.write(0x05); // 아날로그 오디오 출력   ARG 2
-	Wire.endTransmission(true);
+	Wire.endTransmission(true); 
 
 	delay(500); // 오실레이터 발진 대기 500ms
 
@@ -261,9 +261,36 @@ void Si4730::GET_REV()
 }
 
 
+
+uint16_t Si4730::getProperty(uint16_t command)  // 0x4000 처럼 명령 코드 통째로 받기 
+{
+	uint8_t high, low;
+	uint16_t cache;
+
+	high = command >> 8;
+	low = command & 0x00FF;  // 주파수(16비트)를 8비트 2개로 분할 
+
+	Wire.beginTransmission(SI4730_ADDR);
+	Wire.write(0x00); // ARG1. Reserved to 0.
+	Wire.write(high);
+	Wire.write(low);
+	Wire.endTransmission(true);
+	delay(50);
+
+	Wire.requestFrom(SI4730_ADDR, 4);
+	Wire.read(); // 처음 2개 바이트 버리기 
+	Wire.read();
+	cache = Wire.read();
+	cache <<= 8;
+	cache | Wire.read();
+
+	return cache;
+}
+
+
 void Si4730::FM_STATUS()
 {
-	uint8_t cache;
+	uint8_t cache[8];
 	uint16_t rfreq;
 	Wire.beginTransmission(SI4730_ADDR);
 	Wire.write(SI4730_FM_STATUS);
@@ -276,8 +303,8 @@ void Si4730::FM_STATUS()
 	Wire.requestFrom(SI4730_ADDR, 8);
 	for(int i=0; i<8; i++)
 	{
-		cache = Wire.read();
-		Serial.println(cache);
+		cache[i] = Wire.read();
+		Serial.println(cache[i]);
 	}
 	Serial.println("");
 
