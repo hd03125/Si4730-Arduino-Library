@@ -2,6 +2,10 @@
 #include <Arduino.h>
 #include <Si4730.h>
 
+// rstpin are must connected to 3.3v with trasistor or relay etc..
+// to power on Si4730 chip, connect RST PIN with 3.3v and keep connected to it.
+
+// rstpin <--- some resistor ---> [transistor with 3.3v] <-----> RST PIN of Si4730
 
 Si4730::Si4730(uint8_t rstpin)
 {
@@ -67,7 +71,7 @@ void Si4730::seekFM(bool updown) // TRUE 값 받으면 주파수 위로 검색, 
 {
 	Wire.beginTransmission(SI4730_ADDR);
 	Wire.write(SI4730_SEEK_FM);
-	if(updown==true)
+	if(updown)
 		Wire.write(SI4730_SEEK_UP);
 	else
 		Wire.write(SI4730_SEEK_DOWN);
@@ -81,7 +85,7 @@ void Si4730::seekAM(bool updown) // TRUE 값 받으면 주파수 위로 검색, 
 {
 	Wire.beginTransmission(SI4730_ADDR);
 	Wire.write(SI4730_SEEK_AM);
-	if(updown==true)
+	if(updown)
 		Wire.write(SI4730_SEEK_UP);
 	else
 		Wire.write(SI4730_SEEK_DOWN);
@@ -103,7 +107,7 @@ void Si4730::setVolume(uint8_t vol)
 		Wire.write(0x40);  // CMD1
 		Wire.write(0x00);  // CMD2
 		Wire.write(0x00);  // ARG1
-		Wire.write(vol);   // ARG2 - volume
+		Wire.write(vol);   // ARG2 - volume value
 		Wire.endTransmission(true);
 	}
 	else
@@ -119,7 +123,7 @@ void Si4730::setMute(bool mute)  // true = mute / false = unmute
 	Wire.write(0x40);
 	Wire.write(0x01);
 	Wire.write(0x00);
-	if(mute==true)
+	if(mute)
 		Wire.write(0x03);
 	else
 		Wire.write(0x00);
@@ -202,7 +206,7 @@ void Si4730::deEmphasisAM(bool emphasis)  // 신호 대 잡음 비율 개선
 	Wire.write(0x31);  // CMD1
 	Wire.write(0x00);  // CMD2
 	Wire.write(0x00);  // ARG1
-	if(emphasis==true)
+	if(emphasis)
 		Wire.write(0x01);
 	else
 		Wire.write(0x00);
@@ -218,7 +222,7 @@ void Si4730::spaceSeekAM(bool space)  // true -9KHz / false - 10KHz
 	Wire.write(0x34);
 	Wire.write(0x02);
 	Wire.write(0x00);
-	if(space==true)
+	if(space)
 		Wire.write(0x0A);
 	else
 		Wire.write(0x09);
