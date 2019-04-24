@@ -25,9 +25,9 @@ void setup()
 
 	Serial.println("Starting...");
 	
-	radio.powerUp(true);   // Initialize Si4730.
+	radio.powerUp(true);  // Initialize Si4730 with FM mode
 	radio.setFMFrequency(8970); // Set Frequency to FM 89.7MHz
-	radio.AM_STATUS();
+	radio.FM_STATUS();   // get status info by serial output
 	radio.channelFilterFM(4);
 }
 
