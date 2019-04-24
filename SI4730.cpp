@@ -11,12 +11,12 @@ Si4730::Si4730(uint8_t rstpin)
 void Si4730::powerUp(bool mode) // Si4730 초기화, mode가 true 면 FM, false면 AM
 {
 	pinMode(_pin, OUTPUT);
-	Serial.println("ARDUINO START.. wait 4 sec");
+	//Serial.println("ARDUINO START.. wait 4 sec");
 	digitalWrite(_pin, LOW);
 	delay(300);
 	digitalWrite(_pin, HIGH);  // RST 핀에 전류 인가, SI4730 전원 켜기 
 	delay(300);
-	Serial.println("SI4730 START..");
+	//Serial.println("SI4730 START..");
 
 	Wire.beginTransmission(SI4730_ADDR);
 	Wire.write(SI4730_POWER_UP);
@@ -234,10 +234,10 @@ void Si4730::receiveResponse()
 
 	Wire.requestFrom(SI4730_ADDR, 1);   
 	cache = Wire.read();
-	Serial.println("I2C Response!");
+	//Serial.println("I2C Response!");
 
-	Serial.print("Received DATA : ");
-	Serial.println(cache);
+	//Serial.print("Received DATA : ");
+	//Serial.println(cache);
 }
 
 
@@ -250,7 +250,7 @@ void Si4730::GET_REV()
 	Wire.endTransmission(true);
 
 	delay(100);
-	Serial.println("GET Revision from Si4730 - ");
+	//Serial.println("GET Revision from Si4730 - ");
 	Wire.requestFrom(SI4730_ADDR, 16);
 	for(int i=0; i<16; i++)
 	{
@@ -306,7 +306,7 @@ void Si4730::FM_STATUS()
 		cache[i] = Wire.read();
 		Serial.println(cache[i]);
 	}
-	Serial.println("");
+	//Serial.println("");
 
 	rfreq = cache[2];  // 주파수 정보 읽기 & 16비트로 합병 
 	rfreq <<= 8;
