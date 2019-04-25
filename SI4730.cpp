@@ -12,7 +12,7 @@ Si4730::Si4730(uint8_t rstpin)
 	_pin = rstpin;
 }
 
-void Si4730::powerUp(bool mode) // Si4730 초기화, mode가 true 면 FM, false면 AM
+void Si4730::powerUp(bool mode) // Initialize SI4730. True to FM, False to AM mode
 {
 	pinMode(_pin, OUTPUT);
 	//Serial.println("ARDUINO START.. wait 4 sec");
